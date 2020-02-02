@@ -1,0 +1,27 @@
+{
+  "name": "corenote",
+  "version": "1.0.0",
+  "description": "Cornell's note taking system based app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konradnogalski/Corenote.git"
+  },
+  "keywords": [
+    "Cornell",
+    "notes",
+    "productivity"
+  ],
+  "author": "Konrad, Nogalski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/konradnogalski/Corenote/issues"
+  },
+  "homepage": "https://github.com/konradnogalski/Corenote#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
