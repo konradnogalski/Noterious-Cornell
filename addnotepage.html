@@ -7,11 +7,34 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-    <title>Hello, world!</title>
+    <link rel="stylesheet" href="public/css/style.css"
   </head>
   <body>
-    <h1>Hello, world!</h1>
+    <form>
+      <div class="container vh-100">
+        <div class="row">
+          <div class="col-12">
+            <textarea class="form-control h-100" id="title" placeholder="Title"></textarea>
+          </div>
+        </div>
+        <div class="row no-gutters h-50">
+          <div class="col-2 h-100">
+          <textarea class="form-control h-100" id="keywords" placeholder="Keywords"></textarea>
+          </div>
+          <div class="col-10 h-100 no-gutters">
+          <textarea class="form-control h-100" id="notes" placeholder="Notes"></textarea>
+          </div>
+        </div>
+        <div class="row h-25">
+          <div class="col-12 h-100">
+            <textarea class="form-control h-100" id="summary" placeholder="Summary"></textarea>
+          </div>
+        </div>
+        <div class="row justify-content-center mt-3">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </div>
+</form>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
