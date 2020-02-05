@@ -5,7 +5,11 @@ app.use(express.static("public"));
 
 app.get("/", function(req, res)
 {
-  res.send("Szkielet aplikacji do tworzenia notatek systemem Cornella.")
+  res.sendFile("/addnotepage.html", {root: __dirname} , function(err){
+    if (err) {
+      return console.error(err);
+    }
+  });
 });
 
 app.listen(3000, function(){
