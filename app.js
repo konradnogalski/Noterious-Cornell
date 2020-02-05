@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express(); //konwencja - reprezentuje moduł Express
 
+app.use(express.static("public"));
+
 app.get("/", function(req, res)
 {
   res.send("Szkielet aplikacji do tworzenia notatek systemem Cornella.")
