@@ -1,5 +1,19 @@
 const express = require("express");
-const app = express(); //konwencja - reprezentuje moduł Express
+const app = express(); //convention - represents Express module.
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: true, useUnifiedTopology: true});
+
+var noteSchema = new mongoose.Schema({
+  title: String,
+  keywords: String,
+  notes: String,
+  summary: String,
+  created: Date,
+  modified: Date
+});
+
+var Note = mongoose.model("Note", noteSchema) //compiling schema into Model (class that constructs documents).
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true}));
@@ -15,8 +29,17 @@ app.get("/", function(req, res)
 
 app.post("/addnote", function(req, res)
 {
-  var sentFields = "Title: " + req.body.title + "; Keywords: " + req.body.keywords + "; Notes: " + req.body.notes + "; Summary: " + req.body.summary;
-  res.send(sentFields);
+  var noteToAdd = new Note({
+    title: req.body.title,
+    keywords: req.body.keywords,
+    notes: req.body.notes,
+    summary: req.body.summary
+  });
+
+  noteToAdd.save(function(err, addedNote){
+    if (err) return console.error(err);
+    res.send("Note was added successfully!");
+  })
 })
 
 app.listen(3000, function(){
