@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express(); //convention - represents Express module.
 const mongoose = require("mongoose");
+const ejs = require("ejs");
 
 mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -18,7 +19,13 @@ var Note = mongoose.model("Note", noteSchema) //compiling schema into Model (cla
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true}));
 
-app.get("/", function(req, res)
+app.set('view engine', 'ejs');
+
+app.get("/", function(req, res){
+  res.render("previewpage");
+})
+
+app.get("/addnote", function(req, res)
 {
   res.sendFile("/addnotepage.html", {root: __dirname} , function(err){
     if (err) {
