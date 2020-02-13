@@ -23,30 +23,10 @@ app.set('view engine', 'ejs');
 
 app.get("/", function(req, res){
 
-  var note = new Note({
-    title: "Juri Gagarin of a note. The first one send using EJS markup",
-    keywords: "First",
-    notes: "EJS = Embedded JavaScript templating",
-    summary: "First ever sent using EJS. Wowowowowow!"
+  Note.find(function(err, notes) {
+    if (err) return console.error(err);
+    res.render("previewpage", {notes: notes});
   });
-
-  var note2 = new Note({
-    title: "Second for ever",
-    keywords: "Second",
-    notes: "Trying to send notes array to previewPage",
-    summary: "Two notes better than one note!"
-  });
-
-  var note3 = new Note({
-    title: "Third for the win",
-    keywords: "Third",
-    notes: "Creating table rows based on passed list dynamically!",
-    summary: "Embedding javascript code on Preview Page to create table rows dynamically based on passed notes!"
-  });
-
-  var notes = [note, note2, note3];
-
-  res.render("previewpage", {notes: notes});
 })
 
 app.get("/addnote", function(req, res)
