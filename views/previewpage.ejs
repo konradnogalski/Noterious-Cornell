@@ -21,24 +21,17 @@
     </tr>
   </thead>
   <tbody>
+
+    <% notes.forEach(function(note, index){ %>
     <tr>
-      <th scope="row">1</th>
-      <td> <%= notes[0].title %> </td>
-      <td> <%= notes[0].keywords %> </td>
-      <td> <%= notes[0].notes %> </td>
+      <th scope="row"><%= index + 1 %></th>
+      <td> <%= note.title %> </td>
+      <td> <%= note.keywords %> </td>
+      <td> <%= note.notes %> </td>
     </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td> <%= notes[1].title %> </td>
-      <td> <%= notes[1].keywords %> </td>
-      <td> <%= notes[1].notes %> </td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-    </tr>
+
+    <% }); %>
+
   </tbody>
 </table>
 

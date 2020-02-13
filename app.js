@@ -37,7 +37,14 @@ app.get("/", function(req, res){
     summary: "Two notes better than one note!"
   });
 
-  var notes = [note, note2];
+  var note3 = new Note({
+    title: "Third for the win",
+    keywords: "Third",
+    notes: "Creating table rows based on passed list dynamically!",
+    summary: "Embedding javascript code on Preview Page to create table rows dynamically based on passed notes!"
+  });
+
+  var notes = [note, note2, note3];
 
   res.render("previewpage", {notes: notes});
 })
