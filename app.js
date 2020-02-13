@@ -22,7 +22,15 @@ app.use(express.urlencoded({ extended: true}));
 app.set('view engine', 'ejs');
 
 app.get("/", function(req, res){
-  res.render("previewpage");
+
+  var note = new Note({
+    title: "Juri Gagarin of a note. The first one send using EJS markup",
+    keywords: "First",
+    notes: "EJS = Embedded JavaScript templating",
+    summary: "First ever sent using EJS. Wowowowowow!"
+  });
+
+  res.render("previewpage", {note: note});
 })
 
 app.get("/addnote", function(req, res)
