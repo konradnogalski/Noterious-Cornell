@@ -30,7 +30,16 @@ app.get("/", function(req, res){
     summary: "First ever sent using EJS. Wowowowowow!"
   });
 
-  res.render("previewpage", {note: note});
+  var note2 = new Note({
+    title: "Second for ever",
+    keywords: "Second",
+    notes: "Trying to send notes array to previewPage",
+    summary: "Two notes better than one note!"
+  });
+
+  var notes = [note, note2];
+
+  res.render("previewpage", {notes: notes});
 })
 
 app.get("/addnote", function(req, res)
