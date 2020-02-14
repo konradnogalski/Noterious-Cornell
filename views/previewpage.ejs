@@ -11,29 +11,33 @@
     <title>Hello, world!</title>
   </head>
   <body>
-    <table class="table">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Title</th>
-      <th scope="col">Keywords</th>
-      <th scope="col">Note</th>
-    </tr>
-  </thead>
-  <tbody>
+    <div class="container">
 
-    <% notes.forEach(function(note, index){ %>
-    <tr>
-      <th scope="row"><%= index + 1 %></th>
-      <td> <%= note.title %> </td>
-      <td> <%= note.keywords %> </td>
-      <td> <%= note.notes %> </td>
-    </tr>
+      <table class="table table-striped table-borderless table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Keywords</th>
+            <th scope="col">Note</th>
+          </tr>
+        </thead>
+        <tbody>
 
-    <% }); %>
+          <% notes.forEach(function(note, index){ %>
+          <tr nodeid = <%= note._id %>>
+            <th scope="row"><%= index + 1 %></th>
+            <td> <%= note.title %> </td>
+            <td> <%= note.keywords %> </td>
+            <td> <%= note.notes %> </td>
+          </tr>
 
-  </tbody>
-</table>
+          <% }); %>
+
+        </tbody>
+      </table>
+
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
