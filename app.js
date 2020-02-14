@@ -22,37 +22,34 @@ app.use(express.urlencoded({ extended: true}));
 app.set('view engine', 'ejs');
 
 app.get("/", function(req, res){
-
-  Note.find(function(err, notes) {
-    if (err) return console.error(err);
-    res.render("previewpage", {notes: notes});
-  });
+  displayNotesBrowserPage(res);
 })
 
-app.get("/addnote", function(req, res)
-{
-  res.sendFile("/addnotepage.html", {root: __dirname} , function(err){
-    if (err) {
-      return console.error(err);
-    }
-  });
-});
-
-app.post("/addnote", function(req, res)
-{
-  var noteToAdd = new Note({
-    title: req.body.title,
-    keywords: req.body.keywords,
-    notes: req.body.notes,
-    summary: req.body.summary
-  });
-
-  noteToAdd.save(function(err, addedNote){
-    if (err) return console.error(err);
-    res.send("Note was added successfully!");
+app.route("/addnote")
+  .get(function(req, res) {
+    res.render("addeditnote", {route: "/addnote"});
   })
-})
+  .post(function(req, res) {
+    var noteToAdd = new Note({
+      title: req.body.title,
+      keywords: req.body.keywords,
+      notes: req.body.notes,
+      summary: req.body.summary
+    });
+
+    noteToAdd.save(function(err, addedNote){
+      if (err) return console.error(err);
+      displayNotesBrowserPage(res);
+    })
+  });
 
 app.listen(3000, function(){
   console.log("Server is running on port 3000");
 });
+
+function displayNotesBrowserPage(res){
+  Note.find(function(err, notes) {
+    if (err) return console.error(err);
+    res.render("notesbrowser", {notes: notes});
+  });
+}

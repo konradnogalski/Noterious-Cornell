@@ -10,7 +10,12 @@
     <link rel="stylesheet" href="css/style.css"
   </head>
   <body>
-    <form action="/addnote" method="post">
+
+
+    <!-- Przerobić na EJS, action w zależności od tego, z jakiego routa przyszło zapytanie. Jeżeli edycji, to uzupełnij pola, a przy zapisie zaktualizuj dane (nie dodawaj). -->
+
+
+    <form action=<%= route %> method="post">
       <div class="container vh-100">
         <div class="row">
           <div class="col-12">
