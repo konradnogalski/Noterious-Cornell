@@ -25,7 +25,7 @@
         <tbody>
 
           <% notes.forEach(function(note, index){ %>
-          <tr noteid = <%= note._id %> onmouseover="highlight(this)" onmouseout="highlightOff(this)" onclick="editNote(this)">
+          <tr noteid = <%= note._id %> onmouseenter="highlight(this)" onmouseleave="highlightOff(this)" onclick="editNote(this)">
             <th scope="row"><%= index + 1 %></th>
             <td> <%= note.title %> </td>
             <td> <%= note.keywords %> </td>
