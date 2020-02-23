@@ -7,14 +7,26 @@ $("tr").mouseenter(function(){
 });
 
 function highlight(tableRow){
-    $(tableRow).addClass("table-info");
+  if (!isHeaderRow(tableRow)){
+    $(tableRow).addClass("table-secondary");
+  };
 }
 
 function removeHighlight(tableRow){
-    $(tableRow).removeClass("table-info");
+  if (!isHeaderRow(tableRow)){
+    $(tableRow).removeClass("table-secondary");
+  }
+}
+
+function isHeaderRow(tableRow){
+  return typeof $(tableRow).attr("noteid") === "undefined";
 }
 
 function editNote(note){
-  const noteId = $(note).attr("noteid");
+  const noteId = getNoteId(note);
   window.location.href = "http://localhost:3000/editnote/" + noteId;
+}
+
+function getNoteId(note){
+  return $(note).attr("noteid");
 }

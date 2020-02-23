@@ -19,7 +19,7 @@
             <th scope="col">Title</th>
             <th scope="col">Keywords</th>
             <th scope="col">Note</th>
-            <th scope="col"><form action="/addnote" method="get"><button type="submit" class="btn btn-outline-warning">Add</button></form></th>
+            <th scope="col"><form action="/addnote" method="get"><button type="submit" class="btn btn-success btn-block">Add</button></form></th>
           </tr>
         </thead>
         <tbody>
@@ -30,7 +30,7 @@
             <td> <%= note.title %> </td>
             <td> <%= note.keywords %> </td>
             <td> <%= note.notes %> </td>
-            <td class="buttons"><form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-outline-dark">Delete</button></form></td>
+            <td class="buttons"><form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-outline-danger btn-block">Delete</button></form></td>
           </tr>
       <% }); %>
 
