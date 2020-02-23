@@ -72,6 +72,16 @@ app.route("/addnote")
       res.redirect("/");
     });
 
+    app.post("/deleteNote/:noteid", function(req, res){
+      console.log("Trying to delete note: " + req.params.noteId);
+
+      Note.deleteOne({_id: req.params.noteid}, function(err){
+        if (err) return console.error(err);
+      });
+
+      res.redirect("/");
+    });
+
 app.listen(3000, function(){
   console.log("Server is running on port 3000");
 });

@@ -1,9 +1,9 @@
-function highlight(obj){
-  $(obj).addClass("table-info");
+function highlight(tableRow){
+    $(tableRow).addClass("table-info");
 }
 
-function highlightOff(obj){
-  $(obj).removeClass("table-info");
+function removeHighlight(tableRow){
+    $(tableRow).removeClass("table-info");
 }
 
 function editNote(note){

@@ -7,8 +7,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-    <title>Hello, world!</title>
+    <title>Cornell notes</title>
   </head>
   <body>
     <div class="container">
@@ -20,30 +19,32 @@
             <th scope="col">Title</th>
             <th scope="col">Keywords</th>
             <th scope="col">Note</th>
+            <th scope="col"><th>
           </tr>
         </thead>
         <tbody>
 
-          <% notes.forEach(function(note, index){ %>
-          <tr noteid = <%= note._id %> onmouseenter="highlight(this)" onmouseleave="highlightOff(this)" onclick="editNote(this)">
+      <% notes.forEach(function(note, index){ %>
+          <tr noteid=<%= note._id %> onmouseenter="highlight(this)" onmouseleave="removeHighlight(this)" ondblclick="editNote(this)">
             <th scope="row"><%= index + 1 %></th>
             <td> <%= note.title %> </td>
             <td> <%= note.keywords %> </td>
             <td> <%= note.notes %> </td>
+            <td class="buttons"><form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-outline-dark">Delete</button></form></td>
           </tr>
 
-          <% }); %>
+
+      <% }); %>
 
         </tbody>
       </table>
-
     </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script  src="https://code.jquery.com/jquery-3.4.1.min.js"  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="  crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="  crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="javascripts/main.js"></script>
+    <script src="../javascripts/main.js"></script>
   </body>
 </html>
