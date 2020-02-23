@@ -30,7 +30,15 @@ app.get("/", function(req, res){
 
 app.route("/addnote")
   .get(function(req, res) {
-    return res.render("addeditnote", {route: "/addnote", note: {}});
+    return res.render("addeditnote", {
+      route: "/addnote",
+      note: {
+        title: "req.body.title",
+        keywords: "req.body.keywords",
+        notes: "req.body.notes",
+        summary: "req.body.summary"
+      }
+    });
   })
   .post(function(req, res) {
     var noteToAdd = new Note({
@@ -81,6 +89,8 @@ app.route("/addnote")
 
       res.redirect("/");
     });
+
+
 
 app.listen(3000, function(){
   console.log("Server is running on port 3000");

@@ -1,3 +1,11 @@
+$("tr").mouseenter(function(){
+  highlight(this);
+}).mouseout(function(){
+  removeHighlight(this);
+}).dblclick(function(){
+  editNote(this);
+});
+
 function highlight(tableRow){
     $(tableRow).addClass("table-info");
 }
