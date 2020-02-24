@@ -1,20 +1,29 @@
 $("tr").mouseenter(function(){
   highlight(this);
-}).mouseout(function(){
+}).mouseleave(function(){
   removeHighlight(this);
-}).dblclick(function(){
-  editNote(this);
+});
+
+$("button.edit").click(function(){
+  const buttonParentRow = $(this).parent().parent();
+  editNote(buttonParentRow);
 });
 
 function highlight(tableRow){
   if (!isHeaderRow(tableRow)){
     $(tableRow).addClass("table-secondary");
+    return $(tableRow).find(".btn").each(function(){
+      $(this).removeClass("invisible");
+    });
   };
 }
 
 function removeHighlight(tableRow){
   if (!isHeaderRow(tableRow)){
     $(tableRow).removeClass("table-secondary");
+    $(tableRow).find(".btn").each(function(){
+      $(this).addClass("invisible");
+    });
   }
 }
 
