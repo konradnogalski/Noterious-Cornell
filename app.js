@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const ejs = require("ejs");
 
 mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.set('useCreateIndex', true);
 
 var noteSchema = new mongoose.Schema({
   title: String,
@@ -13,6 +14,8 @@ var noteSchema = new mongoose.Schema({
   created: Date,
   modified: Date
 });
+
+noteSchema.index({title: 'text', keywords: 'text', notes: 'text', summary: 'text'});
 
 var Note = mongoose.model("Note", noteSchema) //compiling schema into Model (class that constructs documents).
 
@@ -32,12 +35,7 @@ app.route("/addnote")
   .get(function(req, res) {
     return res.render("addeditnote", {
       route: "/addnote",
-      note: {
-        title: "req.body.title",
-        keywords: "req.body.keywords",
-        notes: "req.body.notes",
-        summary: "req.body.summary"
-      }
+      note: {}
     });
   })
   .post(function(req, res) {
@@ -54,43 +52,51 @@ app.route("/addnote")
     })
   });
 
-  app.route("/editnote/:noteid")
-    .get(function(req, res){
-      Note.findOne({_id: req.params.noteid}, function (err, note){
-        if (err) return console.error(err);
-        res.render("addeditnote", {route: "/editnote/" + req.params.noteid, note: note});
-      });
-
-    })
-    .post(function(req, res){
-      Note.updateOne(
-        { _id: req.params.noteid },
-        {
-          title: req.body.title,
-          keywords: req.body.keywords,
-          notes: req.body.notes,
-          summary: req.body.summary
-        },
-        function (err, writeOpResult){
-          if (err) return console.error(err);
-          console.log(writeOpResult);
-        }
-      );
-
-      res.redirect("/");
+app.route("/editnote/:noteid")
+  .get(function(req, res){
+    Note.findOne({_id: req.params.noteid}, function (err, note){
+      if (err) return console.error(err);
+      res.render("addeditnote", {route: "/editnote/" + req.params.noteid, note: note});
     });
 
-    app.post("/deleteNote/:noteid", function(req, res){
-      console.log("Trying to delete note: " + req.params.noteId);
-
-      Note.deleteOne({_id: req.params.noteid}, function(err){
+  })
+  .post(function(req, res){
+    Note.updateOne(
+      { _id: req.params.noteid },
+      {
+        title: req.body.title,
+        keywords: req.body.keywords,
+        notes: req.body.notes,
+        summary: req.body.summary
+      },
+      function (err, writeOpResult){
         if (err) return console.error(err);
-      });
+        console.log(writeOpResult);
+      }
+    );
 
-      res.redirect("/");
-    });
+    res.redirect("/");
+  });
 
+app.post("/deleteNote/:noteid", function(req, res){
+  console.log("Trying to delete note: " + req.params.noteId);
 
+  Note.deleteOne({_id: req.params.noteid}, function(err){
+    if (err) return console.error(err);
+  });
+
+  res.redirect("/");
+});
+
+app.get("/notes", function(req, res){
+  const {"search-title": title} = req.query; //deconstructing
+
+  Note.find({$text: { $search: title}}, function(err, notes){
+    console.log(title + "\r\n" + notes);
+
+    res.render("notesbrowser", {notes: notes});
+  });
+});
 
 app.listen(3000, function(){
   console.log("Server is running on port 3000");

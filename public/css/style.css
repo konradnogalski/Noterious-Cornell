@@ -1,3 +1,7 @@
 textarea {
   resize: none;
 }
+
+tr button.btn {
+  width: 70px;
+}
