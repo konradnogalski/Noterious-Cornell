@@ -24,24 +24,37 @@
           </th>
         </tr>
       </thead>
+      <% const keywordsToShow = 3 %>
+      <% const noteParagraphsToShow = 2 %>
 
       <% if (notes && notes.length > 0){ %>
         <tbody>
           <% notes.forEach(function(note){ %>
           <tr noteid=<%= note._id %>>
             <td class="text-break font-weight-bolder"> <%= note.title %></td>
-            <td class="text-break text-uppercase text-monospace">
-              <% note.keywords.split(/\r\n/).forEach(function(keyword){ %>
-                <% console.log(keyword) %>
-                <p class="mb-0 text-wrap text-truncate"><%= keyword %></p>
-              <% }); %>
+            <td class="text-break ">
+
+              <% var keywords = note.keywords.split(/\r\n/); %>
+              <% for(let i = 1; i <= keywords.length && i <= keywordsToShow + 1; i++) { %>
+                <% if(i === keywordsToShow + 1){ %>
+                  <p class="font-italic">Click to read more...</p>
+                  <% break; %>
+                <% } %>
+               <p class="mb-1 text-uppercase text-monospace"><%= keywords[i - 1] %></p>
+              <% } %>
             </td>
 
             <td class="text-break text-justify">
-              <% note.notes.split(/\r\n/).forEach(function(paragraph){ %>
-                <% console.log(paragraph) %>
-                <p class="mb-1"><%= paragraph %></p>
-              <% }); %>
+              <% var notes = note.notes.split(/\r\n/); %>
+              <% console.clear() %>
+              <% for(let i = 1; i <= notes.length && i <= noteParagraphsToShow + 1; i++) { %>
+                <% console.log("Iteracja: " + i) %>
+                <% if(i === noteParagraphsToShow + 1){ %>
+                  <p class="font-italic">Click to read more...</p>
+                  <% break; %>
+                <% } %>
+               <p class="mb-1"><%= notes[i - 1] %></p>
+              <% } %>
             </td>
             <td class="buttons">
               <button type="button" class="btn btn-warning btn-block edit mb-1 invisible">Edit</button></form>
