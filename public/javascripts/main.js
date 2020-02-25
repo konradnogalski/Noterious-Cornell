@@ -16,7 +16,7 @@ $("button.button-clear").click(function(){
 function highlight(tableRow){
   if (!isHeaderRow(tableRow)){
     $(tableRow).addClass("table-secondary");
-    return $(tableRow).find(".btn").each(function(){
+    $(tableRow).find(".btn").each(function(){
       $(this).removeClass("invisible");
     });
   };

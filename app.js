@@ -24,10 +24,11 @@ app.use(express.urlencoded({ extended: true}));
 
 app.set('view engine', 'ejs');
 
+// ---  Home route  ---
 app.get("/", function(req, res){
   Note.find(function(err, notes) {
     if (err) return console.error(err);
-    res.render("notesbrowser", {notes: notes});
+    res.render("notesbrowser", { notes: notes });
   });
 })
 

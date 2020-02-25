@@ -9,11 +9,3 @@ textarea {
 tr .btn {
   width: 70px;
 }
-
-.invisible {
-  visibility: hidden;
-}
-
-.visible {
-  visibility: visible;
-}

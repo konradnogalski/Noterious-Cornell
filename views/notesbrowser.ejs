@@ -14,10 +14,11 @@
 
 <body>
   <div class="container">
+    <!-- Search section -->
     <form action="/notes">
       <div class="form-row mt-3 mb-2">
         <div class="col-5">
-          <input type="text" class="form-control" name="search-title" aria-describedby="fullTextSearch" placeholder="Full text search">
+          <input type="text" class="form-control" name="search-title" aria-describedby="fullTextSearch" placeholder="Full text search"/>
         </div>
         <div class="col">
           <button type="submit" class="btn btn-outline-dark">Search</button>
@@ -25,7 +26,7 @@
         </div>
       </div>
     </form>
-
+    <!-- Search result section aka notes list -->
     <table class="table table-striped table-borderless table-hover table-sm">
       <thead class="thead-dark">
         <tr>
@@ -38,9 +39,7 @@
         </tr>
       </thead>
 
-
       <% if (notes && notes.length > 0){ %>
-        <% console.log("I'm in if!") %>
         <tbody>
           <% notes.forEach(function(note, index){ %>
           <tr noteid=<%= note._id %>>
@@ -55,8 +54,6 @@
           <% }); %>
         </tbody>
       <% } %>
-
-
     </table>
   </div>
 
