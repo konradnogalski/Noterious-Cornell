@@ -1,19 +1,5 @@
-<!doctype html>
-<html lang="en">
+<%- include('header'); -%>
 
-<head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-  <link rel="stylesheet" href="../css/style.css" />
-  <title>Cornell notes</title>
-</head>
-
-<body>
-  <div class="container shadow-sm pt-3 pb-2">
     <!-- Search section -->
       <form action="/notes">
         <div class="form-row mb-2">
@@ -21,8 +7,8 @@
             <input type="text" class="form-control" name="search-title" aria-describedby="fullTextSearch" placeholder="Full text search"/>
           </div>
           <div class="col">
-            <button type="submit" class="btn btn-outline-dark shadow">Search</button>
-            <button type="button" class="btn btn-outline-dark shadow-lg button-clear">Clear</button>
+            <button type="submit" class="btn btn-outline-dark">Search</button>
+            <button type="button" class="btn btn-outline-dark button-clear">Clear</button>
           </div>
         </div>
       </form>
@@ -31,10 +17,10 @@
       <thead class="thead-dark">
         <tr>
           <th scope="col" class="w-25 align-middle">Title</th>
-          <th scope="col" class="w-10 align-middle">Keywords</th>
+          <th scope="col" class="w-25 align-middle">Keywords</th>
           <th scope="col" class="w-50 align-middle">Note</th>
-          <th scope="col" class="w-10 align-middle">
-            <form action="/addnote" method="get"><button type="submit" class="btn btn-success btn-block shadow-lg">Add</button></form>
+          <th scope="col" class="align-middle">
+            <form action="/addnote" method="get"><button type="submit" class="btn btn-success btn-block">Add</button></form>
           </th>
         </tr>
       </thead>
@@ -43,31 +29,28 @@
         <tbody>
           <% notes.forEach(function(note){ %>
           <tr noteid=<%= note._id %>>
-            <td class="text-break"> <%= note.title %><div></div> </td>
+            <td class="text-break font-weight-bolder"> <%= note.title %></td>
             <td class="text-break text-uppercase text-monospace">
               <% note.keywords.split(/\r\n/).forEach(function(keyword){ %>
                 <% console.log(keyword) %>
-                <p class="mb-1"><%= keyword %></p>
+                <p class="mb-0 text-wrap text-truncate"><%= keyword %></p>
               <% }); %>
             </td>
 
-            <td class="text-break text-justify"> <%= note.notes %> </td>
+            <td class="text-break text-justify">
+              <% note.notes.split(/\r\n/).forEach(function(paragraph){ %>
+                <% console.log(paragraph) %>
+                <p class="mb-1"><%= paragraph %></p>
+              <% }); %>
+            </td>
             <td class="buttons">
-              <button type="button" class="btn btn-warning btn-block edit mb-1 invisible shadow-lg">Edit</button></form>
-              <form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-danger btn-block invisible shadow-lg">Delete</button></form>
+              <button type="button" class="btn btn-warning btn-block edit mb-1 invisible">Edit</button></form>
+              <form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-danger btn-block invisible">Delete</button></form>
             </td>
           </tr>
           <% }); %>
         </tbody>
       <% } %>
       </table>
-    </div>
 
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script src="/javascripts/main.js"></script>
-  </body>
-</html>
+<%- include('footer'); -%>

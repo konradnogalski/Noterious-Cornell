@@ -15,3 +15,15 @@ tbody tr {
 tr .btn {
   width: 70px;
 }
+
+.title {
+  border-bottom: 5px double #b0b0b0;
+}
+
+.keywords {
+  border-right: 5px double #b0b0b0;
+}
+
+.summary {
+  border-top: 5px double #b0b0b0;
+}

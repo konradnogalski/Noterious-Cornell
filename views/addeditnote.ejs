@@ -1,33 +1,23 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<%- include('header'); -%>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/style.css">
-  </head>
-  <body>
     <form action="<%= route %>" method="post">
-      <div class="container vh-100">
+      <div class="container mt-3">
         <div class="row">
-          <div class="col-12">
-            <textarea class="form-control h-100" name="title" id="title" placeholder="Title"><%= note.title %></textarea>
+          <div class="col-12 title">
+            <textarea class="form-control h-100 border-0" name="title" placeholder="Title"><%= note.title %></textarea>
           </div>
         </div>
         <div class="row no-gutters h-50">
-          <div class="col-2 h-100">
-            <textarea class="form-control h-100" name="keywords" id="keywords" placeholder="Keywords"><%= note.keywords %></textarea>
+          <div class="col-2 h-100 keywords">
+            <textarea rows=25 class="form-control h-100 border-0" name="keywords" placeholder="Keywords"><%= note.keywords %></textarea>
           </div>
           <div class="col-10 h-100 no-gutters">
-            <textarea class="form-control h-100" name="notes" id="notes" placeholder="Notes"><%= note.notes %></textarea>
+            <textarea rows=25 class="form-control h-100 border-0"  name="notes" placeholder="Notes"><%= note.notes %></textarea>
           </div>
         </div>
         <div class="row h-25">
-          <div class="col-12 h-100">
-            <textarea class="form-control h-100" name="summary" id="summary" placeholder="Summary"><%= note.summary %></textarea>
+          <div class="col-12 h-100 summary">
+            <textarea row=5 class="form-control h-100 border-0" name="summary" placeholder="Summary"><%= note.summary %></textarea>
           </div>
         </div>
         <div class="row justify-content-center mt-3">
@@ -36,10 +26,4 @@
       </div>
     </form>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  </body>
-</html>
+<%- include('footer'); -%>
