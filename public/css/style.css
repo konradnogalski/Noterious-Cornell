@@ -1,9 +1,15 @@
+/* Bootstrap dark-color: #343A40 */
+
 html {
   overflow-y: scroll;
 }
 
 textarea {
   resize: none;
+}
+
+tbody tr {
+  border-bottom: 2px solid #343A40;
 }
 
 tr .btn {
