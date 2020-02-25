@@ -9,6 +9,10 @@ $("button.edit").click(function(){
   editNote(buttonParentRow);
 });
 
+$("button.button-clear").click(function(){
+  window.location.href = "http://localhost:3000";
+})
+
 function highlight(tableRow){
   if (!isHeaderRow(tableRow)){
     $(tableRow).addClass("table-secondary");
