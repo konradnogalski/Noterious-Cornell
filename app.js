@@ -99,6 +99,13 @@ app.get("/notes", function(req, res){
   });
 });
 
+app.get("/notes/:noteid", function(req, res){
+  Note.findOne({_id: req.params.noteid}, function(err, note){
+    if (err) return console.error(err);
+    res.send(note);
+  })
+})
+
 app.listen(3000, function(){
   console.log("Server is running on port 3000");
 });

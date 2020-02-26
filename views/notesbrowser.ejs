@@ -28,16 +28,19 @@
       <% const noteParagraphsToShow = 2 %>
 
       <% if (notes && notes.length > 0){ %>
-        <tbody>
+        <tbody max-keywords="<%= keywordsToShow %>" max-paragraphs= <%= noteParagraphsToShow %>>
           <% notes.forEach(function(note){ %>
-          <tr noteid=<%= note._id %>>
+            <% const keywords = note.keywords.split(/\r\n/); %>
+            <% const notes = note.notes.split(/\r\n/); %>
+
+            <% var showMore = keywords.length > keywordsToShow || notes.length > noteParagraphsToShow  %>
+          <tr noteid="<%= note._id %>" showMore="<%= showMore %>" >
             <td class="text-break font-weight-bolder"> <%= note.title %></td>
             <td class="text-break ">
 
-              <% var keywords = note.keywords.split(/\r\n/); %>
               <% for(let i = 1; i <= keywords.length && i <= keywordsToShow + 1; i++) { %>
                 <% if(i === keywordsToShow + 1){ %>
-                  <p class="font-italic">Click to read more...</p>
+                  <p class="font-italic show-more">Click to show more...</p>
                   <% break; %>
                 <% } %>
                <p class="mb-1 text-uppercase text-monospace"><%= keywords[i - 1] %></p>
@@ -45,12 +48,9 @@
             </td>
 
             <td class="text-break text-justify">
-              <% var notes = note.notes.split(/\r\n/); %>
-              <% console.clear() %>
               <% for(let i = 1; i <= notes.length && i <= noteParagraphsToShow + 1; i++) { %>
-                <% console.log("Iteracja: " + i) %>
                 <% if(i === noteParagraphsToShow + 1){ %>
-                  <p class="font-italic">Click to read more...</p>
+                  <p class="font-italic show-more">Click to show more...</p>
                   <% break; %>
                 <% } %>
                <p class="mb-1"><%= notes[i - 1] %></p>
