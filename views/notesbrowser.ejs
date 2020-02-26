@@ -24,38 +24,52 @@
           </th>
         </tr>
       </thead>
+
+      <!-- Table body -->
       <% const keywordsToShow = 3 %>
       <% const noteParagraphsToShow = 2 %>
 
       <% if (notes && notes.length > 0){ %>
         <tbody max-keywords="<%= keywordsToShow %>" max-paragraphs= <%= noteParagraphsToShow %>>
+
+          <!-- Table row-->
           <% notes.forEach(function(note){ %>
             <% const keywords = note.keywords.split(/\r\n/); %>
             <% const notes = note.notes.split(/\r\n/); %>
+            <% var showMoreKeywords = keywords.length > keywordsToShow %>
+            <% var showMoreNoteParagraphs = notes.length > noteParagraphsToShow  %>
 
-            <% var showMore = keywords.length > keywordsToShow || notes.length > noteParagraphsToShow  %>
-          <tr noteid="<%= note._id %>" showMore="<%= showMore %>" >
+          <tr noteid="<%= note._id %>" showMore="<%= showMoreKeywords ||  showMoreNoteParagraphs%>" >
+
+            <!-- Title cell -->
             <td class="text-break font-weight-bolder"> <%= note.title %></td>
+
+            <!-- Keywords cell -->
             <td class="text-break ">
 
-              <% for(let i = 1; i <= keywords.length && i <= keywordsToShow + 1; i++) { %>
-                <% if(i === keywordsToShow + 1){ %>
-                  <p class="font-italic show-more">Click to show more...</p>
-                  <% break; %>
-                <% } %>
-               <p class="mb-1 text-uppercase text-monospace"><%= keywords[i - 1] %></p>
+            <% keywords.forEach((keyword, index) => { %>
+              <% const shouldAddHiddenClass = index > keywordsToShow - 1; %>
+              <p class="mb-1 text-uppercase text-monospace<%= shouldAddHiddenClass ? ' d-none' : '' %>"><%= keyword %></p>
+            <% }); %>
+
+            <% if(showMoreKeywords){  %>
+              <p class="font-italic show-more">Click to show more...</p>
+            <% } %>
+            </td>
+
+            <!-- Notes cell  -->
+            <td class="text-break text-justify">
+              <% notes.forEach((note, index) => { %>
+              <% const shouldAddHiddenClass = index > noteParagraphsToShow - 1;  %>
+               <p class="mb-1<%= shouldAddHiddenClass ? ' d-none' : '' %>"><%= note %></p>
+              <% }); %>
+
+              <% if(showMoreNoteParagraphs){ %>
+                <p class="font-italic show-more">Click to show more...</p>
               <% } %>
             </td>
 
-            <td class="text-break text-justify">
-              <% for(let i = 1; i <= notes.length && i <= noteParagraphsToShow + 1; i++) { %>
-                <% if(i === noteParagraphsToShow + 1){ %>
-                  <p class="font-italic show-more">Click to show more...</p>
-                  <% break; %>
-                <% } %>
-               <p class="mb-1"><%= notes[i - 1] %></p>
-              <% } %>
-            </td>
+            <!-- Note action button (edit, delete) -->
             <td class="buttons">
               <button type="button" class="btn btn-warning btn-block edit mb-1 invisible">Edit</button></form>
               <form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-danger btn-block invisible">Delete</button></form>

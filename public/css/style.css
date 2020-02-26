@@ -16,6 +16,14 @@ tr .btn {
   width: 70px;
 }
 
+.table-hover tbody tr:hover td {
+  background-color: #a2d8f1;
+}
+
+.table-hover tbody tr:hover td:last-child .btn {
+  visibility: visible !important;
+}
+
 .title {
   border-bottom: 5px double #b0b0b0;
 }
