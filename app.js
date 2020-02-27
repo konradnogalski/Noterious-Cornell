@@ -1,11 +1,24 @@
+require('dotenv').config();
+
 const express = require("express");
 const app = express(); //convention - represents Express module.
 const mongoose = require("mongoose");
 const ejs = require("ejs");
+var encrypt = require('mongoose-encryption');
 
 mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useCreateIndex', true);
 var loggedUser = null;
+
+var userSchema = Schema = new mongoose.Schema({
+  email: String,
+  password: String,
+  created: {type: Date, default: Date.now()},
+});
+
+userSchema.plugin(encrypt, {secret: process.env.secret, encryptedFields: ['password']}, );
+var User = mongoose.model("User", userSchema);
+
 var noteSchema = new mongoose.Schema({
   title: String,
   keywords: String,
@@ -16,16 +29,8 @@ var noteSchema = new mongoose.Schema({
   user: String
 });
 
-var userSchema = Schema = new mongoose.Schema({
-  email: String,
-  password: String,
-  created: {type: Date, default: Date.now()},
-});
-
 noteSchema.index({title: 'text', keywords: 'text', notes: 'text', summary: 'text'});
-
-var Note = mongoose.model("Note", noteSchema); //compiling schema into Model (class that constructs documents).
-var User = mongoose.model("User", userSchema);
+Note = mongoose.model("Note", noteSchema); //compiling schema into Model (class that constructs documents).
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true}));
