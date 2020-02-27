@@ -26,7 +26,7 @@ function attachEditButtonOnClickEventHandler() {
 
 function attachClearButtonOnClickEventHandler() {
   $("button.button-clear").click(function() {
-    window.location.href = "http://localhost:3000";
+    window.location.href = "http://localhost:3000/home";
   })
 }
 
