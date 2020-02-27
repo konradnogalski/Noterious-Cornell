@@ -4,7 +4,8 @@ const express = require("express");
 const app = express(); //convention - represents Express module.
 const mongoose = require("mongoose");
 const ejs = require("ejs");
-var encrypt = require('mongoose-encryption');
+const encrypt = require('mongoose-encryption');
+const bcrypt = require('bcrypt');
 
 mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useCreateIndex', true);
@@ -45,20 +46,19 @@ app.get("/", function(req, res){
 app.route("/login")
   .get(function(req, res){
     res.render("login", {type: "login", error: "" });
-}).post(function(req, res){
+}).post(async function(req, res){
     const {email, password} = req.body;
-    User.findOne({email: email}, function(err, user){
+    User.findOne({email: email}, async function(err, user){
       if (err) { return console.error(err); }
 
-      if(user) {
-        if (password === user.password){
+      if(await isSuccessfulyAuthenticated(user, password)){
           loggedUser = user;
           return res.redirect("/home");
-        }
       }
-      return res.render("login", {type: "login", error: "true" })
+
+      res.render("login", {type: "login", error: "true" })
     });
-})
+});
 
 // --- Register route ---
 app.route("/register")
@@ -73,16 +73,19 @@ app.route("/register")
     if (user) {
         res.render("login", {type: "register", error: "true"});
     } else {
-      var userToAdd = new User({
-        email: email,
-        password: password,
+      bcrypt.hash(password, parseInt(process.env.salt_rounds, 10), function(err, hash){
+        if (err) return console.log(err);
+
+        var userToAdd = new User({
+          email: email,
+          password: hash,
+        });
+
+        userToAdd.save(function(err, addedUser){
+          if (err) return console.error(err);
+          return res.redirect("/login")
+        });
       });
-
-      userToAdd.save(function(err, addedUser){
-        if (err) return console.error(err);
-
-        return res.redirect("/login")
-      })
     }
   });
 })
@@ -182,4 +185,12 @@ function restrict(req, res, next){
   } else {
     res.send("<p>You need to sign in first</p>")
   }
+}
+
+async function isSuccessfulyAuthenticated(user, receivedPassword){
+  let isSuccessfulyAuthenticated = false;
+  if(user) {
+    isSuccessfulyAuthenticated = await bcrypt.compare(receivedPassword, user.password);
+  }
+  return isSuccessfulyAuthenticated;
 }
