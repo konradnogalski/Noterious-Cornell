@@ -13,7 +13,6 @@ function attachNoteRowListeners() {
   const noteRows = $("tbody > tr");
 
   noteRows.click(function() {
-    const parentRowElement = $(this).parent().parent();
     showMore(this);
   });
 }
@@ -45,7 +44,7 @@ function showMore(tableRow) {
     notes.last().text("Click to show less...");
   }
 
-  $(tableRow).click(function() {
+  $(tableRow).off().click(function() {
     showLess(this);
   });
 }
@@ -64,7 +63,7 @@ function showLess(tableRow) {
     notes.last().text("Click to show more...");
   }
 
-  $(tableRow).click(function() {
+  $(tableRow).off().click(function() {
     showMore(this);
   });
 }
