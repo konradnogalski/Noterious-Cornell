@@ -1,9 +1,19 @@
-$("input[type='password']").on("keyup", doesPasswordMatch);
+$("input[type='password']").on("keyup", verifyPasswords);
+$("form[action='/register']").on("submit", doPasswordsMatch);
 
-function doesPasswordMatch(){
-    if($("#inputPasswordConfirm").val() === $("#inputPassword").val()){
-        $("#inputPasswordConfirm").removeClass("is-invalid").addClass("is-valid");
-    } else {
-        $("#inputPasswordConfirm").addClass("is-invalid").removeClass("is-valid");
-    }
+function doPasswordsMatch(){
+  return $("#inputPasswordConfirm").val() === $("#inputPassword").val();
+}
+
+function verifyPasswords(){
+  const arePasswordFieldsEmpty = $("#inputPasswordConfirm").val() === "" && $("#inputPassword").val() === "";
+  if (arePasswordFieldsEmpty){
+    return;
   }
+
+  if(doPasswordsMatch()){
+      $("#inputPasswordConfirm").removeClass("is-invalid").addClass("is-valid");
+  } else {
+      $("#inputPasswordConfirm").addClass("is-invalid").removeClass("is-valid");
+  }
+}
