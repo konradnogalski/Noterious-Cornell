@@ -2,7 +2,9 @@ require('dotenv').config();
 const express = require("express");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const mongoose = require("mongoose");
+const findOrCreate = require("mongoose-findorcreate");
 const ejs = require("ejs");
 const session = require("express-session")
 const bcrypt = require("bcrypt");
@@ -28,18 +30,19 @@ mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: tru
 mongoose.set('useCreateIndex', true);
 
 var userSchema = Schema = new mongoose.Schema({
-  email: String,
+  username: String,
   password: String,
+  googleId: String,
   created: {type: Date, default: Date.now()},
 });
 
 userSchema.plugin(encrypt, {secret: process.env.SECRET, encryptedFields: ['password']});
+userSchema.plugin(findOrCreate);
 var User = mongoose.model("User", userSchema);
 
 passport.use(new LocalStrategy(
-  { usernameField: "email" },
-  async function(email, password, done) {
-    User.findOne({ email: email }, async function (err, user){
+  async function(username, password, done) {
+    User.findOne({ username: username }, async function (err, user){
 
       if (err) { return done(err); }
       if (!user) {
@@ -49,6 +52,18 @@ passport.use(new LocalStrategy(
         return done(null, false, { message: 'Incorrect password.' });
       }
       return done(null, user);
+    });
+  }
+));
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret:process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/callback"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ googleId: profile.id, username: profile.displayName }, function (err, user) {
+      return cb(err, user);
     });
   }
 ));
@@ -69,21 +84,48 @@ var noteSchema = new mongoose.Schema({
   summary: String,
   created: { type: Date, default: Date.now() },
   modified: Date,
-  user: String
+  userid: String
 });
 
 noteSchema.index({title: 'text', keywords: 'text', notes: 'text', summary: 'text'});
 Note = mongoose.model("Note", noteSchema); //compiling schema into Model (class that constructs documents).
 
-// --- Authenticate each request ---
-app.use(isUserAuthenticated);
+// --- Register route ---
+app.route("/register")
+  .get(function(req, res){
+    res.render("login", {type: "register", error: ""});
+}).post(function(req, res){
+  const {username, password} = req.body;
+
+  User.findOne({username: username}, function(err, user){
+    if (err) { return console.log(err); }
+    if (user) { return res.render("login", {type: "register", error: "true"}) }
+
+    bcrypt.hash(password, parseInt(process.env.salt_rounds), function(err, hash) {
+      if (err) return console.log(err);
+
+      var userToAdd = new User({
+        username: username,
+        password: hash,
+      });
+
+      userToAdd.save(function(err, addedUser){
+        if (err) return console.error(err);
+        return res.redirect("/login")
+      });
+    });
+  });
+});
 
 // --- Login route ---
-app.get("/", function(req, res){
-  res.redirect("/home");
-})
+app.get("/",
+  isUserAuthenticated,
+  function(req, res){
+    res.redirect("/home");
+  });
 
 app.route("/login")
+  .all(isUserAuthenticated)
   .get(function(req, res){
     res.render("login", {type: "login", error: "" });
 }).post(function(req, res, next){
@@ -97,44 +139,29 @@ app.route("/login")
   })(req, res, next);
 });
 
-// --- Register route ---
-app.route("/register")
-  .get(function(req, res){
-    res.render("login", {type: "register", error: ""});
-}).post(function(req, res){
-  const {email, password} = req.body;
+// --- Google login ---
+app.get("/auth/google",
+  passport.authenticate('google', { scope: ['profile'] }));
 
-  User.findOne({email: email}, function(err, user){
-    if (err) { return console.log(err); }
-    if (user) { return res.render("login", {type: "register", error: "true"}) }
+app.get("/auth/google/callback",
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+      res.redirect('/home');
+  });
 
-    bcrypt.hash(password, parseInt(process.env.salt_rounds), function(err, hash) {
-      if (err) return console.log(err);
-
-      var userToAdd = new User({
-        email: email,
-        password: hash,
-      });
-
-      userToAdd.save(function(err, addedUser){
-        if (err) return console.error(err);
-        return res.redirect("/login")
-      });
-    });
+// ---  Home route  ---
+app.get("/home",
+isUserAuthenticated,
+function(req, res){
+  Note.find({ userid: req.user._id}, function(err, notes) {
+    if (err) return console.error(err);
+    res.render("notesbrowser", { notes: notes, username: req.user.username });
   });
 });
 
-// ---  Home route  ---
-app.get("/home", function(req, res){
-  Note.find({ user: req.user._id}, function(err, notes) {
-    if (err) return console.error(err);
-    res.render("notesbrowser", { notes: notes, email: req.user.email });
-  });
-})
-
 // ---  Add note route ---
 app.route("/addnote")
-  // .all(isUserAuthenticated)
+  .all(isUserAuthenticated)
   .get(function(req, res) {
     return res.render("addeditnote", {
       route: "/addnote",
@@ -147,7 +174,7 @@ app.route("/addnote")
       keywords: req.body.keywords,
       notes: req.body.notes,
       summary: req.body.summary,
-      user: req.user._id
+      userid: req.user._id
     });
 
     noteToAdd.save(function(err, addedNote){
@@ -158,6 +185,7 @@ app.route("/addnote")
 
 // --- Edit note route ---
 app.route("/editnote/:noteid")
+  .all(isUserAuthenticated)
   .get(function(req, res){
     Note.findOne({_id: req.params.noteid}, function (err, note){
       if (err) return console.error(err);
@@ -176,30 +204,36 @@ app.route("/editnote/:noteid")
       },
       function (err, writeOpResult){
         if (err) return console.error(err);
-        console.log(writeOpResult);
       }
     );
-
     res.redirect("/home");
   });
 
 // --- Delete note route ---
-app.route("/deleteNote/:noteid")
-  .post(function(req, res){
-
+app.post("/deleteNote/:noteid",
+  isUserAuthenticated,
+  function(req, res){
     Note.deleteOne({_id: req.params.noteid}, function(err){
       if (err) return console.error(err);
       res.redirect("/home");
     });
 });
 
-app.route("/notes")
-  .get(function(req, res){
+// --- Get notes route ---
+app.get("/notes",
+isUserAuthenticated,
+function(req, res){
     const {"search-title": title} = req.query; //deconstructing
 
-    Note.find({ $and: [{ user: req.user._id }, { $text: { $search: title } }] }, function(err, notes){
-      res.render("notesbrowser", {notes: notes, email: req.user.email});
+    Note.find({ $and: [{ userid: req.user._id }, { $text: { $search: title } }] }, function(err, notes){
+      res.render("notesbrowser", {notes: notes, username: req.user.username});
     });
+});
+
+/// --- logut route ---
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/login');
 });
 
 app.listen(3000, function(){
