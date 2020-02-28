@@ -33,7 +33,7 @@ var userSchema = Schema = new mongoose.Schema({
   created: {type: Date, default: Date.now()},
 });
 
-userSchema.plugin(encrypt, {secret: process.env.SECRET, encryptedFields: ['password']}, );
+userSchema.plugin(encrypt, {secret: process.env.SECRET, encryptedFields: ['password']});
 var User = mongoose.model("User", userSchema);
 
 passport.use(new LocalStrategy(
@@ -45,7 +45,7 @@ passport.use(new LocalStrategy(
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' }); //delete last param
       }
-      if (await !bcrypt.compare(password, user.password)) {
+      if ( !(await bcrypt.compare(password, user.password))) {
         return done(null, false, { message: 'Incorrect password.' });
       }
       return done(null, user);
