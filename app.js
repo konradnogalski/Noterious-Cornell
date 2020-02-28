@@ -185,7 +185,7 @@ app.route("/addnote")
 
 // --- Edit note route ---
 app.route("/editnote/:noteid")
-  .all(isUserAuthenticated)
+  .all(isUserAuthenticated, isNoteOwner)
   .get(function(req, res){
     Note.findOne({_id: req.params.noteid}, function (err, note){
       if (err) return console.error(err);
@@ -212,6 +212,7 @@ app.route("/editnote/:noteid")
 // --- Delete note route ---
 app.post("/deleteNote/:noteid",
   isUserAuthenticated,
+  isNoteOwner,
   function(req, res){
     Note.deleteOne({_id: req.params.noteid}, function(err){
       if (err) return console.error(err);
@@ -251,4 +252,16 @@ function isUserAuthenticated(req, res, next){
     }
 
     res.redirect("/login")
+}
+
+function isNoteOwner(req, res, next){
+  console.log(req.params.noteid);
+    Note.findOne({_id: req.params.noteid}, function(err, note){
+      if (err) return console.error(err);
+      if (!req.user._id.equals(note.userid)){
+        console.log(typeof(note.userid) + " " + typeof(req.user._id));
+        return res.send("Permission denied!");
+      }
+      return next();
+    });
 }
