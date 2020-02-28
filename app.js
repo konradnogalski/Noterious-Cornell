@@ -1,15 +1,31 @@
 require('dotenv').config();
-
 const express = require("express");
-const app = express(); //convention - represents Express module.
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const ejs = require("ejs");
+const session = require("express-session")
+const bcrypt = require("bcrypt");
 const encrypt = require('mongoose-encryption');
-const bcrypt = require('bcrypt');
+
+const app = express(); //convention - represents Express module.
+
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true}));
+app.set('view engine', 'ejs');
+
+app.use(session({
+  secret: process.env.SECRET_SESSION,
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 mongoose.connect("mongodb://localhost:27017/cornellnotes", {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useCreateIndex', true);
-var loggedUser = null;
 
 var userSchema = Schema = new mongoose.Schema({
   email: String,
@@ -17,8 +33,34 @@ var userSchema = Schema = new mongoose.Schema({
   created: {type: Date, default: Date.now()},
 });
 
-userSchema.plugin(encrypt, {secret: process.env.secret, encryptedFields: ['password']}, );
+userSchema.plugin(encrypt, {secret: process.env.SECRET, encryptedFields: ['password']}, );
 var User = mongoose.model("User", userSchema);
+
+passport.use(new LocalStrategy(
+  { usernameField: "email" },
+  async function(email, password, done) {
+    User.findOne({ email: email }, async function (err, user){
+
+      if (err) { return done(err); }
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' }); //delete last param
+      }
+      if (await !bcrypt.compare(password, user.password)) {
+        return done(null, false, { message: 'Incorrect password.' });
+      }
+      return done(null, user);
+    });
+  }
+));
+
+passport.serializeUser(function(user, done){
+  done(null, user._id);
+});
+passport.deserializeUser(function(id, done){
+  User.findById(id, function(err, user){
+    done(err, user);
+  })
+});
 
 var noteSchema = new mongoose.Schema({
   title: String,
@@ -33,31 +75,26 @@ var noteSchema = new mongoose.Schema({
 noteSchema.index({title: 'text', keywords: 'text', notes: 'text', summary: 'text'});
 Note = mongoose.model("Note", noteSchema); //compiling schema into Model (class that constructs documents).
 
-app.use(express.static("public"));
-app.use(express.urlencoded({ extended: true}));
-
-app.set('view engine', 'ejs');
+// --- Authenticate each request ---
+app.use(isUserAuthenticated);
 
 // --- Login route ---
 app.get("/", function(req, res){
-  res.redirect("/login");
+  res.redirect("/home");
 })
 
 app.route("/login")
   .get(function(req, res){
     res.render("login", {type: "login", error: "" });
-}).post(async function(req, res){
-    const {email, password} = req.body;
-    User.findOne({email: email}, async function(err, user){
-      if (err) { return console.error(err); }
-
-      if(await isSuccessfulyAuthenticated(user, password)){
-          loggedUser = user;
-          return res.redirect("/home");
-      }
-
-      res.render("login", {type: "login", error: "true" })
+}).post(function(req, res, next){
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.render('login', {type: "login", error: "true"}); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      return res.redirect("/home");
     });
+  })(req, res, next);
 });
 
 // --- Register route ---
@@ -67,42 +104,32 @@ app.route("/register")
 }).post(function(req, res){
   const {email, password} = req.body;
 
-  User.findOne({email: email}, function(err, user){
-    if (err) return console.error(err);
+  bcrypt.hash(password, parseInt(process.env.salt_rounds), function(err, hash) {
+    if (err) return console.log(err);
 
-    if (user) {
-        res.render("login", {type: "register", error: "true"});
-    } else {
-      bcrypt.hash(password, parseInt(process.env.salt_rounds, 10), function(err, hash){
-        if (err) return console.log(err);
+    var userToAdd = new User({
+      email: email,
+      password: hash,
+    });
 
-        var userToAdd = new User({
-          email: email,
-          password: hash,
-        });
-
-        userToAdd.save(function(err, addedUser){
-          if (err) return console.error(err);
-          return res.redirect("/login")
-        });
-      });
-    }
+    userToAdd.save(function(err, addedUser){
+      if (err) return console.error(err);
+      return res.redirect("/login")
+    });
   });
-})
+});
 
 // ---  Home route  ---
-app.route("/home")
-  .all(restrict)
-  .get(function(req, res){
-    Note.find({ user: loggedUser._id} ,function(err, notes) {
-      if (err) return console.error(err);
-      res.render("notesbrowser", { notes: notes, email: loggedUser.email });
-    });
+app.get("/home", function(req, res){
+  Note.find({ user: req.user._id}, function(err, notes) {
+    if (err) return console.error(err);
+    res.render("notesbrowser", { notes: notes, email: req.user.email });
+  });
 })
 
 // ---  Add note route ---
 app.route("/addnote")
-  .all(restrict)
+  // .all(isUserAuthenticated)
   .get(function(req, res) {
     return res.render("addeditnote", {
       route: "/addnote",
@@ -115,7 +142,7 @@ app.route("/addnote")
       keywords: req.body.keywords,
       notes: req.body.notes,
       summary: req.body.summary,
-      user: loggedUser._id
+      user: req.user._id
     });
 
     noteToAdd.save(function(err, addedNote){
@@ -126,7 +153,6 @@ app.route("/addnote")
 
 // --- Edit note route ---
 app.route("/editnote/:noteid")
-  .all(restrict)
   .get(function(req, res){
     Note.findOne({_id: req.params.noteid}, function (err, note){
       if (err) return console.error(err);
@@ -154,7 +180,6 @@ app.route("/editnote/:noteid")
 
 // --- Delete note route ---
 app.route("/deleteNote/:noteid")
-  .all(restrict)
   .post(function(req, res){
 
     Note.deleteOne({_id: req.params.noteid}, function(err){
@@ -164,14 +189,11 @@ app.route("/deleteNote/:noteid")
 });
 
 app.route("/notes")
-  .all(restrict)
   .get(function(req, res){
     const {"search-title": title} = req.query; //deconstructing
 
-    Note.find({$text: { $search: title}}, function(err, notes){
-      console.log(title + "\r\n" + notes);
-
-      res.render("notesbrowser", {notes: notes, email: loggedUser.email});
+    Note.find({ $and: [{ user: req.user._id }, { $text: { $search: title } }] }, function(err, notes){
+      res.render("notesbrowser", {notes: notes, email: req.user.email});
     });
 });
 
@@ -179,18 +201,15 @@ app.listen(3000, function(){
   console.log("Server is running on port 3000");
 });
 
-function restrict(req, res, next){
-  if(loggedUser != null){
-    next();
-  } else {
-    res.send("<p>You need to sign in first</p>")
-  }
-}
+function isUserAuthenticated(req, res, next){
 
-async function isSuccessfulyAuthenticated(user, receivedPassword){
-  let isSuccessfulyAuthenticated = false;
-  if(user) {
-    isSuccessfulyAuthenticated = await bcrypt.compare(receivedPassword, user.password);
-  }
-  return isSuccessfulyAuthenticated;
+    if(req.url === "/login" || req.url === "/register"){
+      return next();
+    }
+
+    if(req.isAuthenticated()){
+     return next();
+    }
+
+    res.redirect("/login")
 }
