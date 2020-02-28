@@ -104,17 +104,22 @@ app.route("/register")
 }).post(function(req, res){
   const {email, password} = req.body;
 
-  bcrypt.hash(password, parseInt(process.env.salt_rounds), function(err, hash) {
-    if (err) return console.log(err);
+  User.findOne({email: email}, function(err, user){
+    if (err) { return console.log(err); }
+    if (user) { return res.render("login", {type: "register", error: "true"}) }
 
-    var userToAdd = new User({
-      email: email,
-      password: hash,
-    });
+    bcrypt.hash(password, parseInt(process.env.salt_rounds), function(err, hash) {
+      if (err) return console.log(err);
 
-    userToAdd.save(function(err, addedUser){
-      if (err) return console.error(err);
-      return res.redirect("/login")
+      var userToAdd = new User({
+        email: email,
+        password: hash,
+      });
+
+      userToAdd.save(function(err, addedUser){
+        if (err) return console.error(err);
+        return res.redirect("/login")
+      });
     });
   });
 });
