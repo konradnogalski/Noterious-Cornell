@@ -3,21 +3,21 @@
     <form action="<%= route %>" method="post">
       <div class="container mt-3">
         <div class="row">
-          <div class="col-12 title">
-            <textarea class="form-control h-100 border-0" name="title" placeholder="Title"><%= note.title %></textarea>
+          <div class="col-12 p-3 title">
+            <textarea class="form-control h-100 border-0 p-0" name="title" placeholder="Title"><%= note.title %></textarea>
           </div>
         </div>
         <div class="row no-gutters h-50">
-          <div class="col-2 h-100 keywords">
+          <div class="col-2 p-3 h-100 keywords">
             <textarea rows=25 class="form-control h-100 border-0" name="keywords" placeholder="Keywords"><%= note.keywords %></textarea>
           </div>
-          <div class="col-10 h-100 no-gutters">
+          <div class="col-10 p-3 h-100 no-gutters">
             <textarea rows=25 class="form-control h-100 border-0"  name="notes" placeholder="Notes"><%= note.notes %></textarea>
           </div>
         </div>
         <div class="row h-25">
-          <div class="col-12 h-100 summary">
-            <textarea row=5 class="form-control h-100 border-0" name="summary" placeholder="Summary"><%= note.summary %></textarea>
+          <div class="col-12 h-100 summary p-3">
+            <textarea rows=5 class="form-control h-100 border-0 p-0" name="summary" placeholder="Summary"><%= note.summary %></textarea>
           </div>
         </div>
         <div class="row justify-content-center mt-3">
