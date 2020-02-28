@@ -44,8 +44,8 @@
 
           <!-- Table row-->
           <% notes.forEach(function(note){ %>
-            <% const keywords = note.keywords.split(/\r\n/); %>
-            <% const notes = note.notes.split(/\r\n/); %>
+            <% const keywords = note.keywords ? note.keywords.split(/\r\n/) : []  %>
+            <% const notes = note.notes ? note.notes.split(/\r\n/) : [] %>
             <% var showMoreKeywords = keywords.length > keywordsToShow %>
             <% var showMoreNoteParagraphs = notes.length > noteParagraphsToShow  %>
 
