@@ -17,6 +17,9 @@
   ],
   "author": "Konrad, Nogalski",
   "license": "ISC",
+  "engines": {
+    "node": "12.16.0"
+  },
   "bugs": {
     "url": "https://github.com/konradnogalski/Corenote/issues"
   },

@@ -26,7 +26,7 @@ function attachEditButtonOnClickEventHandler() {
 
 function attachClearButtonOnClickEventHandler() {
   $("button.button-clear").click(function() {
-    window.location.href = "http://localhost:3000/home";
+    window.location.href = "/home";
   })
 }
 
@@ -82,7 +82,7 @@ function getRowCell(tableRow, columnPosition){
 
 function editNote(noteRow) {
   const noteId = getNoteId(noteRow);
-  window.location.href = "http://localhost:3000/editnote/" + noteId;
+  window.location.href = "/editnote/" + noteId;
 }
 
 function getNoteId(noteRow) {

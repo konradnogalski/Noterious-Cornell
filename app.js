@@ -25,9 +25,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-const db_path = "mongodb+srv://" + process.env.DB_ADMIN + ":" + process.env.DB_PASSWORD + "@" + process.env.DB_PROD_HOST + "/noteriouscornell";
-
-mongoose.connect(db_path, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.set('useCreateIndex', true);
 
 var userSchema = Schema = new mongoose.Schema({
