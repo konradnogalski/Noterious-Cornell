@@ -7,4 +7,4 @@ I built it on top of [Express.js](https://expressjs.com/) and [mongoDB](https://
 
 The app is available [here](https://noterious-cornell.herokuapp.com). It was deployed using [Heroku](www.heroku.com) and [mongoDb Atlas](https://www.mongodb.com/cloud/atlas).
 
-If you have any suggestions (especially regarding code improvement), just let me know.
+If you have any suggestions (especially regarding code improvement), contact me at my email address: konradnogalski@gmail.com.
