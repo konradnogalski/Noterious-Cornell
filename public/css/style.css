@@ -1,5 +1,11 @@
 /* Bootstrap dark-color: #343A40 */
 
+body {
+  font-family: benton-sans, sans-serif;
+  font-style: normal;
+  font-weight: 100;
+}
+
 html {
   overflow-y: scroll;
 }
