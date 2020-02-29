@@ -63,7 +63,7 @@
       </div>
       <div class="font-weight-normal invalid-feedback "> <%= type === 'login' ? 'Wrong username and/or password' : 'User already exists' %> </div>
 
-      <button class="btn btn-lg btn-primary btn-block text-capitalize" type="submit"><%= type %></button>
+      <button class="btn btn-lg btn-info btn-block text-capitalize" type="submit"><%= type %></button>
       <% if (type === 'login'){ %>
         <a class="btn btn-lg btn-primary btn-block text-capitalize" href="/auth/google" role="button">Google</a>
       <% } %>
@@ -75,9 +75,7 @@
 
       <p class="mt-5 mb-3 text-muted">&copy; iTester <%= new Date().getFullYear(); %></p>
     </form>
-
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="/javascripts/signin.js" type="text/javascript" ></script>
-
 </body>
 </html>
