@@ -236,6 +236,10 @@ app.get('/logout', function(req, res){
   res.redirect('/login');
 });
 
+///--- Examples route ---
+app.get('/examples', function(req, res){
+  res.render("examples")
+})
 
 let port = process.env.PORT;
 if(port == null || port == ""){
