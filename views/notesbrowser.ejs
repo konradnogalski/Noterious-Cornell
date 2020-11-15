@@ -1,93 +1,105 @@
 <%- include('header'); -%>
 
-    <!-- Search section -->
-      <form action="/notes">
-        <div class="form-row mb-2">
-          <div class="col-5">
-            <input type="text" class="form-control" name="search-title" aria-describedby="fullTextSearch" placeholder="Full text search"/>
-          </div>
-          <div class="col">
-            <button type="submit" class="btn btn-outline-dark">Search</button>
-            <button type="button" class="btn btn-outline-dark button-clear">Clear</button>
-          </div>
-          <div class="col text-right">
-              <span class="logged-user align-middle"><%= username %></span>
-              <a href="/logout" role="button">
-                <svg class="bi-box-arrow-right" width="2rem" height="2rem" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M13.646 13.354a.5.5 0 010-.708L16.293 10l-2.647-2.646a.5.5 0 01.708-.708l3 3a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0z" clip-rule="evenodd"></path>
-                  <path fill-rule="evenodd" d="M6.5 10a.5.5 0 01.5-.5h9a.5.5 0 010 1H7a.5.5 0 01-.5-.5z" clip-rule="evenodd"></path>
-                  <path fill-rule="evenodd" d="M4 15.5A1.5 1.5 0 012.5 14V6A1.5 1.5 0 014 4.5h7A1.5 1.5 0 0112.5 6v1.5a.5.5 0 01-1 0V6a.5.5 0 00-.5-.5H4a.5.5 0 00-.5.5v8a.5.5 0 00.5.5h7a.5.5 0 00.5-.5v-1.5a.5.5 0 011 0V14a1.5 1.5 0 01-1.5 1.5H4z" clip-rule="evenodd"></path>
-                </svg>
-              </a>
-          </div>
-        </div>
-      </form>
-    <!-- Search result section aka notes list -->
-    <table class="table table-borderless table-hover table-striped table-sm">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col" class="w-25 align-middle">Title</th>
-          <th scope="col" class="w-25 align-middle">Keywords</th>
-          <th scope="col" class="w-50 align-middle">Note</th>
-          <th scope="col" class="align-middle">
-            <form action="/addnote" method="get"><button type="submit" class="btn btn-success btn-block">Add</button></form>
-          </th>
-        </tr>
-      </thead>
+<!-- Search section -->
+<form action="/notes">
+  <div class="form-row mb-2">
+    <div class="col-5">
+      <input type="text" class="form-control" name="search-title" aria-describedby="fullTextSearch" placeholder="Full text search" />
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-outline-dark">Search</button>
+      <button type="button" class="btn btn-outline-dark button-clear">Clear</button>
+    </div>
+    <div class="col text-right">
+      <span class="logged-user align-middle"><%= user.username %></span>
+      <a href="/logout" role="button">
+        <svg class="bi-box-arrow-right" width="2rem" height="2rem" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M13.646 13.354a.5.5 0 010-.708L16.293 10l-2.647-2.646a.5.5 0 01.708-.708l3 3a.5.5 0 010 .708l-3 3a.5.5 0 01-.708 0z" clip-rule="evenodd"></path>
+          <path fill-rule="evenodd" d="M6.5 10a.5.5 0 01.5-.5h9a.5.5 0 010 1H7a.5.5 0 01-.5-.5z" clip-rule="evenodd"></path>
+          <path fill-rule="evenodd" d="M4 15.5A1.5 1.5 0 012.5 14V6A1.5 1.5 0 014 4.5h7A1.5 1.5 0 0112.5 6v1.5a.5.5 0 01-1 0V6a.5.5 0 00-.5-.5H4a.5.5 0 00-.5.5v8a.5.5 0 00.5.5h7a.5.5 0 00.5-.5v-1.5a.5.5 0 011 0V14a1.5 1.5 0 01-1.5 1.5H4z"
+            clip-rule="evenodd"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+  <div class="form-row form-check mb-2">
+    <div class="col-5">
+      <input class="form-check-input" type="checkbox" id="showPublic" name="show-public"  <%= publicNotesEnabled ? " checked" : ""  %>>
+      <label class="form-check-label" for="showPublic">
+        show public notes
+      </label>
+    </div>
+  </div>
+</form>
+<!-- Search result section aka notes list -->
+<table class="table table-borderless table-hover table-striped table-sm">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col" class="w-25 align-middle">Title</th>
+      <th scope="col" class="w-25 align-middle">Keywords</th>
+      <th scope="col" class="w-50 align-middle">Note</th>
+      <th scope="col" class="align-middle">
+        <form action="/addnote" method="get"><button type="submit" class="btn btn-success btn-block">Add</button></form>
+      </th>
+    </tr>
+  </thead>
 
-      <!-- Table body -->
-      <% const keywordsToShow = 3 %>
-      <% const noteParagraphsToShow = 2 %>
+  <!-- Table body -->
+  <% const keywordsToShow = 3 %>
+  <% const noteParagraphsToShow = 2 %>
 
-      <% if (notes && notes.length > 0){ %>
-        <tbody max-keywords="<%= keywordsToShow %>" max-paragraphs= <%= noteParagraphsToShow %>>
+  <% if (notes && notes.length > 0){ %>
+  <tbody max-keywords="<%= keywordsToShow %>" max-paragraphs=<%= noteParagraphsToShow %>>
 
-          <!-- Table row-->
-          <% notes.forEach(function(note){ %>
-            <% const keywords = note.keywords ? note.keywords.split(/\r\n/) : []  %>
-            <% const notes = note.notes ? note.notes.split(/\r\n/) : [] %>
-            <% var showMoreKeywords = keywords.length > keywordsToShow %>
-            <% var showMoreNoteParagraphs = notes.length > noteParagraphsToShow  %>
+    <!-- Table row-->
+    <% notes.forEach(function(note){ %>
+    <% const keywords = note.keywords ? note.keywords.split(/\r\n/) : []  %>
+    <% const notes = note.notes ? note.notes.split(/\r\n/) : [] %>
+    <% var showMoreKeywords = keywords.length > keywordsToShow %>
+    <% var showMoreNoteParagraphs = notes.length > noteParagraphsToShow  %>
 
-          <tr noteid="<%= note._id %>" showMore="<%= showMoreKeywords ||  showMoreNoteParagraphs%>" >
+    <tr noteid="<%= note._id %>" showMore="<%= showMoreKeywords ||  showMoreNoteParagraphs%>" <%= note.public && note.userid != user._id ? "class=text-info" : "" %>
 
-            <!-- Title cell -->
-            <td class="text-break font-weight-bolder"> <%= note.title %></td>
+      <!-- Title cell -->
+      <td class="text-break font-weight-bolder"> <%= note.title %></td>
 
-            <!-- Keywords cell -->
-            <td class="text-break ">
+      <!-- Keywords cell -->
+      <td class="text-break ">
 
-            <% keywords.forEach((keyword, index) => { %>
-              <% const shouldAddHiddenClass = index > keywordsToShow - 1; %>
-              <p class="mb-1 text-uppercase text-monospace<%= shouldAddHiddenClass ? ' d-none' : '' %>"><%= keyword %></p>
-            <% }); %>
+        <% keywords.forEach((keyword, index) => { %>
+        <% const shouldAddHiddenClass = index > keywordsToShow - 1; %>
+        <p class="mb-1 text-uppercase text-monospace<%= shouldAddHiddenClass ? ' d-none' : '' %>"><%= keyword %></p>
+        <% }); %>
 
-            <% if(showMoreKeywords){  %>
-              <p class="font-italic show-more">Click to show more...</p>
-            <% } %>
-            </td>
+        <% if(showMoreKeywords){  %>
+        <p class="font-italic show-more">Click to show more...</p>
+        <% } %>
+      </td>
 
-            <!-- Notes cell  -->
-            <td class="text-break text-justify">
-              <% notes.forEach((note, index) => { %>
-              <% const shouldAddHiddenClass = index > noteParagraphsToShow - 1;  %>
-               <p class="mb-1<%= shouldAddHiddenClass ? ' d-none' : '' %>"><%= note %></p>
-              <% }); %>
+      <!-- Notes cell  -->
+      <td class="text-break text-justify">
+        <% notes.forEach((note, index) => { %>
+        <% const shouldAddHiddenClass = index > noteParagraphsToShow - 1;  %>
+        <p class="mb-1<%= shouldAddHiddenClass ? ' d-none' : '' %>"><%= note %></p>
+        <% }); %>
 
-              <% if(showMoreNoteParagraphs){ %>
-                <p class="font-italic show-more">Click to show more...</p>
-              <% } %>
-            </td>
+        <% if(showMoreNoteParagraphs){ %>
+        <p class="font-italic show-more">Click to show more...</p>
+        <% } %>
+      </td>
 
-            <!-- Note action button (edit, delete) -->
-            <td class="buttons">
-              <button type="button" class="btn btn-warning btn-block edit mb-1 invisible">Edit</button></form>
-              <form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-danger btn-block invisible">Delete</button></form>
-            </td>
-          </tr>
-          <% }); %>
-        </tbody>
-      <% } %>
-      </table>
+      <!-- Note action button (edit, delete) -->
+      <td class="buttons">
+        <button type="button" class="btn btn-warning btn-block edit mb-1 invisible">Edit</button></form>
+        <form action="/deleteNote/<%= note._id %>" method="post"><button type="submit" class="btn btn-danger btn-block invisible">Delete</button></form>
+      </td>
+    </tr>
+    <% }); %>
+  </tbody>
+  <% } %>
+</table>
+<% if(notes.some(n => n.public == true && n.userid != user._id)){ %>
+  <p class="text-info">* public note not created by you - read only<p>
+    <% } %>
 
 <%- include('footer'); -%>

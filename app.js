@@ -83,7 +83,8 @@ var noteSchema = new mongoose.Schema({
   summary: String,
   created: { type: Date, default: Date.now() },
   modified: Date,
-  userid: String
+  userid: String,
+  public: Boolean
 });
 
 noteSchema.index({title: 'text', keywords: 'text', notes: 'text', summary: 'text'});
@@ -154,7 +155,7 @@ isUserAuthenticated,
 function(req, res){
   Note.find({ userid: req.user._id}, function(err, notes) {
     if (err) return console.error(err);
-    res.render("notesbrowser", { notes: notes, username: req.user.username });
+    res.render("notesbrowser", { notes: notes, user: req.user, publicNotesEnabled: req.publicNotesEnabled == undefined ? false : req.publicNotesEnabled });
   });
 });
 
@@ -173,7 +174,8 @@ app.route("/addnote")
       keywords: req.body.keywords,
       notes: req.body.notes,
       summary: req.body.summary,
-      userid: req.user._id
+      userid: req.user._id,
+      public: req.body.showPublic == 'on' ? true : false
     });
 
     noteToAdd.save(function(err, addedNote){
@@ -199,7 +201,8 @@ app.route("/editnote/:noteid")
         title: req.body.title,
         keywords: req.body.keywords,
         notes: req.body.notes,
-        summary: req.body.summary
+        summary: req.body.summary,
+        public: req.body.showPublic == 'on' ? true : false
       },
       function (err, writeOpResult){
         if (err) return console.error(err);
@@ -223,10 +226,23 @@ app.post("/deleteNote/:noteid",
 app.get("/notes",
 isUserAuthenticated,
 function(req, res){
-    const {"search-title": title} = req.query; //deconstructing
+    const {"search-title": title, "show-public": showPublic} = req.query; //deconstructing
 
-    Note.find({ $and: [{ userid: req.user._id }, { $text: { $search: title } }] }, function(err, notes){
-      res.render("notesbrowser", {notes: notes, username: req.user.username});
+    Note.find({ $text: { $search: title }}, function(err, foundNotes){
+      let notes;
+      let publicNotesEnabled = false;
+
+      if (err) return console.error(err);
+      if(showPublic === 'on'){
+
+        notes = foundNotes.filter(n => n.public == true || n.userid == req.user._id);
+        publicNotesEnabled = true;
+
+      } else {
+        notes = foundNotes.filter(n => n.userid == req.user._id);
+      }
+
+      res.render("notesbrowser", {notes: notes, user: req.user, publicNotesEnabled: publicNotesEnabled});
     });
 });
 
@@ -236,6 +252,10 @@ app.get('/logout', function(req, res){
   res.redirect('/login');
 });
 
+///--- Examples route ---
+app.get('/examples', function(req, res){
+  res.render("examples")
+})
 
 let port = process.env.PORT;
 if(port == null || port == ""){
