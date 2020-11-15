@@ -1,29 +1,38 @@
 <%- include('header'); -%>
 
-    <form action="<%= route %>" method="post">
-      <div class="container mt-3">
-        <div class="row">
-          <div class="col-12 p-3 title">
-            <textarea class="form-control h-100 border-0 p-0" name="title" placeholder="Title"><%= note.title %></textarea>
-          </div>
-        </div>
-        <div class="row no-gutters h-50">
-          <div class="col-2 p-3 h-100 keywords">
-            <textarea rows=25 class="form-control h-100 border-0" name="keywords" placeholder="Keywords"><%= note.keywords %></textarea>
-          </div>
-          <div class="col-10 p-3 h-100 no-gutters">
-            <textarea rows=25 class="form-control h-100 border-0"  name="notes" placeholder="Notes"><%= note.notes %></textarea>
-          </div>
-        </div>
-        <div class="row h-25">
-          <div class="col-12 h-100 summary p-3">
-            <textarea rows=5 class="form-control h-100 border-0 p-0" name="summary" placeholder="Summary"><%= note.summary %></textarea>
-          </div>
-        </div>
-        <div class="row justify-content-center mt-3">
-            <button type="submit" class="btn btn-primary">Save</button>
-        </div>
+<form action="<%= route %>" method="post">
+  <div class="container mt-3">
+    <div class="row">
+      <div class="col-12 p-3 title">
+        <textarea class="form-control h-100 border-0 p-0" name="title" placeholder="Title"><%= note.title %></textarea>
       </div>
-    </form>
+    </div>
+    <div class="row no-gutters h-50">
+      <div class="col-2 p-3 h-100 keywords">
+        <textarea rows=25 class="form-control h-100 border-0" name="keywords" placeholder="Keywords"><%= note.keywords %></textarea>
+      </div>
+      <div class="col-10 p-3 h-100 no-gutters">
+        <textarea rows=25 class="form-control h-100 border-0" name="notes" placeholder="Notes"><%= note.notes %></textarea>
+      </div>
+    </div>
+    <div class="row h-25">
+      <div class="col-12 h-100 summary p-3">
+        <textarea rows=5 class="form-control h-100 border-0 p-0" name="summary" placeholder="Summary"><%= note.summary %></textarea>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="showPublic" name="showPublic" <%= note.public ? " checked" : "" %>>
+        <label class="form-check-label" for="showPublic">
+          Public note
+        </label>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-3">
+      <button type="submit" class="btn btn-primary">Save</button>
+
+    </div>
+  </div>
+</form>
 
 <%- include('footer'); -%>
